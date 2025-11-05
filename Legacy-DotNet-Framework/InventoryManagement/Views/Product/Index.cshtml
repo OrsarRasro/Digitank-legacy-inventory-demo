@@ -1,0 +1,100 @@
+@model IEnumerable<InventoryManagement.Models.Product>
+
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Product Management</h2>
+
+<div style="margin: 20px 0;">
+    @Html.ActionLink("Add New Product", "Create", null, new { @class = "btn" })
+</div>
+
+<div style="background-color: #e8f4fd; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 20px 0;">
+    <h4>📊 Product Statistics</h4>
+    <p><strong>Total Products:</strong> @ViewBag.TotalProducts</p>
+    <p><strong>Low Stock Items:</strong> @ViewBag.LowStockCount</p>
+    <p><strong>Total Inventory Value:</strong> @ViewBag.TotalValue</p>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product Name</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Supplier</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr style="@(product.IsLowStock() ? "background-color: #fff5f5;" : "")">
+                    <td>@product.ProductId</td>
+                    <td><strong>@product.ProductName</strong></td>
+                    <td>@(string.IsNullOrEmpty(product.Description) ? "No description" : product.Description.Substring(0, Math.Min(50, product.Description.Length)) + (product.Description.Length > 50 ? "..." : ""))</td>
+                    <td>@product.Category</td>
+                    <td>@product.Supplier</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>
+                        <span style="@(product.IsLowStock() ? "color: #e74c3c; font-weight: bold;" : "color: #27ae60;")">
+                            @product.StockQuantity
+                        </span>
+                    </td>
+                    <td>
+                        @if (product.IsLowStock())
+                        {
+                            <span style="background-color: #e74c3c; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px;">LOW STOCK</span>
+                        }
+                        else
+                        {
+                            <span style="background-color: #27ae60; color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px;">IN STOCK</span>
+                        }
+                    </td>
+                    <td>@product.CreatedDate.ToString("MM/dd/yyyy")</td>
+                    <td>
+                        @Html.ActionLink("View", "Details", new { id = product.ProductId }, new { @class = "btn", style = "font-size: 12px; padding: 4px 8px;" })
+                        @Html.ActionLink("Edit", "Edit", new { id = product.ProductId }, new { @class = "btn", style = "font-size: 12px; padding: 4px 8px;" })
+                        @Html.ActionLink("Delete", "Delete", new { id = product.ProductId }, new { @class = "btn", style = "font-size: 12px; padding: 4px 8px; background-color: #e74c3c;" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div style="text-align: center; padding: 40px; background-color: #f8f9fa; border-radius: 5px;">
+        <h3>No Products Found</h3>
+        <p>Get started by adding your first product to the inventory.</p>
+        @Html.ActionLink("Add First Product", "Create", null, new { @class = "btn" })
+    </div>
+}
+
+<div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-top: 30px;">
+    <h4>⚠️ Legacy System Limitations</h4>
+    <ul>
+        <li><strong>No Pagination:</strong> All products loaded at once (performance issue with large datasets)</li>
+        <li><strong>No Search/Filter:</strong> Cannot search or filter products</li>
+        <li><strong>No APIs:</strong> No REST endpoints for mobile app integration</li>
+        <li><strong>Synchronous Operations:</strong> Page blocks during database operations</li>
+        <li><strong>No Real-time Updates:</strong> Must refresh page to see changes</li>
+    </ul>
+</div>
+
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px;">
+    <h4>🔧 Technical Details</h4>
+    <p><strong>Database:</strong> Entity Framework 6 with synchronous operations</p>
+    <p><strong>Rendering:</strong> Server-side only (no AJAX)</p>
+    <p><strong>Platform:</strong> Windows Server + IIS required</p>
+    <p><strong>Scalability:</strong> Single server, no load balancing support</p>
+</div>
