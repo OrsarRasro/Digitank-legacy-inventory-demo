@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
-using System.Web.Mvc;
 using InventoryManagement.Models;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace InventoryManagement.Controllers
 {

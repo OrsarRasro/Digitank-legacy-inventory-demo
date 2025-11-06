@@ -1,0 +1,9 @@
+/* Bootstrap CSS placeholder */
+.container { max-width: 1200px; margin: 0 auto; }
+.row { display: flex; flex-wrap: wrap; }
+.col-md-12 { width: 100%; }
+.btn { padding: 6px 12px; margin-bottom: 0; font-size: 14px; }
+.btn-primary { background-color: #337ab7; border-color: #2e6da4; color: #fff; }
+.form-control { display: block; width: 100%; padding: 6px 12px; }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 8px; border-top: 1px solid #ddd; }
