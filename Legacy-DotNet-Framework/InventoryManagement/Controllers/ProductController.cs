@@ -1,8 +1,15 @@
 using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Web.Mvc;
 using InventoryManagement.Models;
+using Microsoft.AspNetCore.Mvc;
+
+using Microsoft.AspNetCore.Http;
+
+using Microsoft.AspNetCore.Mvc.Rendering;
+
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 
 namespace InventoryManagement.Controllers
 {
@@ -21,7 +28,7 @@ namespace InventoryManagement.Controllers
             {
                 // Legacy: Load all products at once - performance issue for large datasets
                 var products = db.Products.ToList();
-                
+
                 // Legacy: Business logic in controller
                 ViewBag.TotalProducts = products.Count;
                 ViewBag.LowStockCount = products.Count(p => p.IsLowStock());
@@ -43,14 +50,14 @@ namespace InventoryManagement.Controllers
             if (id == null)
             {
                 // Legacy: Poor error handling
-                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+                return StatusCode((int)System.Net.HttpStatusCode.BadRequest);
             }
 
             // Legacy: Synchronous database call
             Product product = db.Products.Find(id);
             if (product == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             // Legacy: Calculate related data in controller
@@ -65,22 +72,22 @@ namespace InventoryManagement.Controllers
         public ActionResult Create()
         {
             // Legacy: Hardcoded dropdown values - should come from database or configuration
-            ViewBag.Categories = new SelectList(new[] 
-            { 
-                "Electronics", 
-                "Books", 
-                "Clothing", 
-                "Hardware", 
-                "Software" 
+            ViewBag.Categories = new SelectList(new[]
+            {
+                "Electronics",
+                "Books",
+                "Clothing",
+                "Hardware",
+                "Software"
             });
 
-            ViewBag.Suppliers = new SelectList(new[] 
-            { 
-                "TechCorp", 
-                "BookWorld", 
-                "FashionPlus", 
-                "HardwarePro", 
-                "SoftwareCorp" 
+            ViewBag.Suppliers = new SelectList(new[]
+            {
+                "TechCorp",
+                "BookWorld",
+                "FashionPlus",
+                "HardwarePro",
+                "SoftwareCorp"
             });
 
             return View();
@@ -89,7 +96,7 @@ namespace InventoryManagement.Controllers
         // Legacy: POST: Product/Create - no async, poor validation
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductId,ProductName,Description,Price,StockQuantity,Category,Supplier")] Product product)
+        public ActionResult Create([Bind("ProductId,ProductName,Description,Price,StockQuantity,Category,Supplier")] Product product)
         {
             try
             {
@@ -121,22 +128,22 @@ namespace InventoryManagement.Controllers
             }
 
             // Legacy: Reload dropdown data on error - inefficient
-            ViewBag.Categories = new SelectList(new[] 
-            { 
-                "Electronics", 
-                "Books", 
-                "Clothing", 
-                "Hardware", 
-                "Software" 
+            ViewBag.Categories = new SelectList(new[]
+            {
+                "Electronics",
+                "Books",
+                "Clothing",
+                "Hardware",
+                "Software"
             });
 
-            ViewBag.Suppliers = new SelectList(new[] 
-            { 
-                "TechCorp", 
-                "BookWorld", 
-                "FashionPlus", 
-                "HardwarePro", 
-                "SoftwareCorp" 
+            ViewBag.Suppliers = new SelectList(new[]
+            {
+                "TechCorp",
+                "BookWorld",
+                "FashionPlus",
+                "HardwarePro",
+                "SoftwareCorp"
             });
 
             return View(product);
@@ -147,33 +154,33 @@ namespace InventoryManagement.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+                return StatusCode((int)System.Net.HttpStatusCode.BadRequest);
             }
 
             // Legacy: Synchronous find operation
             Product product = db.Products.Find(id);
             if (product == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             // Legacy: Reload dropdown data every time
-            ViewBag.Categories = new SelectList(new[] 
-            { 
-                "Electronics", 
-                "Books", 
-                "Clothing", 
-                "Hardware", 
-                "Software" 
+            ViewBag.Categories = new SelectList(new[]
+            {
+                "Electronics",
+                "Books",
+                "Clothing",
+                "Hardware",
+                "Software"
             }, product.Category);
 
-            ViewBag.Suppliers = new SelectList(new[] 
-            { 
-                "TechCorp", 
-                "BookWorld", 
-                "FashionPlus", 
-                "HardwarePro", 
-                "SoftwareCorp" 
+            ViewBag.Suppliers = new SelectList(new[]
+            {
+                "TechCorp",
+                "BookWorld",
+                "FashionPlus",
+                "HardwarePro",
+                "SoftwareCorp"
             }, product.Supplier);
 
             return View(product);
@@ -182,7 +189,7 @@ namespace InventoryManagement.Controllers
         // Legacy: POST: Product/Edit/5 - no async, poor concurrency handling
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductId,ProductName,Description,Price,StockQuantity,Category,Supplier,CreatedDate")] Product product)
+        public ActionResult Edit([Bind("ProductId,ProductName,Description,Price,StockQuantity,Category,Supplier,CreatedDate")] Product product)
         {
             try
             {
@@ -205,22 +212,22 @@ namespace InventoryManagement.Controllers
             }
 
             // Legacy: Reload dropdown data on error
-            ViewBag.Categories = new SelectList(new[] 
-            { 
-                "Electronics", 
-                "Books", 
-                "Clothing", 
-                "Hardware", 
-                "Software" 
+            ViewBag.Categories = new SelectList(new[]
+            {
+                "Electronics",
+                "Books",
+                "Clothing",
+                "Hardware",
+                "Software"
             }, product.Category);
 
-            ViewBag.Suppliers = new SelectList(new[] 
-            { 
-                "TechCorp", 
-                "BookWorld", 
-                "FashionPlus", 
-                "HardwarePro", 
-                "SoftwareCorp" 
+            ViewBag.Suppliers = new SelectList(new[]
+            {
+                "TechCorp",
+                "BookWorld",
+                "FashionPlus",
+                "HardwarePro",
+                "SoftwareCorp"
             }, product.Supplier);
 
             return View(product);
@@ -231,13 +238,13 @@ namespace InventoryManagement.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);
+                return StatusCode((int)System.Net.HttpStatusCode.BadRequest);
             }
 
             Product product = db.Products.Find(id);
             if (product == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             return View(product);
